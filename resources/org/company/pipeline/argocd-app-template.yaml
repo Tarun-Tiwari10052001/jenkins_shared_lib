@@ -1,0 +1,51 @@
+# resources/org/company/pipeline/argocd-app-template.yaml
+#
+# Reference GitOps Application manifest for one environment (dev/qa/prod).
+# The pipeline does not apply this file directly — it drives the already-
+# registered Argo CD Application via `argocd app set/sync/wait` (see
+# vars/argoDeploy.groovy). This template documents the shape of that
+# Application, including the Helm values the pipeline sets, and the
+# labels Prometheus/Loki/Grafana key off of for monitoring correlation.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp-<ENVIRONMENT>          # e.g. myapp-dev, myapp-qa, myapp-prod
+  namespace: argocd
+  labels:
+    app: myapp
+    environment: <ENVIRONMENT>
+spec:
+  project: myapp
+  source:
+    repoURL: https://github.com/company/myapp-gitops.git
+    targetRevision: main
+    path: charts/myapp
+    helm:
+      valueFiles:
+        - values-<ENVIRONMENT>.yaml
+      parameters:
+        - name: image.repository
+          value: artifactory.company.com/docker-local/myapp
+        - name: image.tag
+          value: <IMAGE_TAG>          # set by: argocd app set ... --helm-set image.tag=<tag>
+        - name: podLabels.app
+          value: myapp
+        - name: podLabels.environment
+          value: <ENVIRONMENT>
+        - name: podLabels.version
+          value: <IMAGE_TAG>
+        - name: podAnnotations.prometheus\.io/scrape
+          value: "true"
+        - name: podAnnotations.prometheus\.io/port
+          value: "8080"
+        - name: podAnnotations.prometheus\.io/path
+          value: "/actuator/prometheus"
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp-<ENVIRONMENT>
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=false
