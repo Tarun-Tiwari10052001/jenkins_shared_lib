@@ -1,0 +1,58 @@
+# Default configuration for the Jenkins Shared Library.
+# Loaded via: libraryResource 'org/company/pipeline/config.yml'
+# Individual Jenkinsfiles may override any of these via pipeline `environment {}` vars.
+
+sonarqube:
+  serverName: SonarQubeServer
+  qualityGateTimeoutMinutes: 10
+
+dependencyCheck:
+  failOnCvssScore: 9.0     # fail build if any finding >= this score
+  reportFormats: [ALL]
+
+trivy:
+  severity: "CRITICAL,HIGH"
+  exitOnFindings: true
+
+gitleaks:
+  exitCode: true
+  redact: true
+
+sbom:
+  tool: syft
+  format: cyclonedx-json
+  outputFile: sbom.json
+
+artifactory:
+  serverId: jfrog-server-id
+  mavenTool: maven-3.8.1
+  releaseRepo: libs-release-local
+  snapshotRepo: libs-snapshots-local
+  dockerRepo: docker-local
+
+vault:
+  addr: https://vault:8200
+  credentialId: vault-token-id
+  basePath: secret/data/ci
+
+argocd:
+  apps:
+    dev: myapp-dev
+    staging: myapp-staging
+    prod: myapp-prod
+  server: argocd.internal:443
+  syncPolicy:
+    dev: automated
+    staging: automated
+    prod: manual
+
+notifications:
+  slackChannel: "#ci-cd-alerts"
+
+registry:
+  host: myregistry
+  imageName: myapp
+
+branches:
+  protected: [main, "release/*"]
+  requirePrApproval: [main, "release/*", develop]

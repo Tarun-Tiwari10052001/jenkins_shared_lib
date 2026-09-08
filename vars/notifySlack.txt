@@ -1,0 +1,10 @@
+## notifySlack
+
+Global step (callable directly as `notifySlack(...)`) wrapping the Slack Notification plugin.
+
+**Parameters** (Map):
+- `color` — `good` | `warning` | `danger` (default `warning`)
+- `message` — text to post (default generic notification)
+- `channel` — Slack channel (default `#ci-cd-alerts`)
+
+Requires a `slack-webhook` Jenkins credential and the workspace/team configured globally.

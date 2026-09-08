@@ -1,0 +1,28 @@
+## deployHelpers
+
+Signing, Artifactory publishing, and Argo CD GitOps promotion.
+
+### signWithGpg(String filePath)
+Signs a file with GPG using the `gpg-key` file credential + a `GPG_PASSPHRASE` secret.
+
+### signWithCosign(String imageTag)
+Signs a container image with cosign using the `cosign-key` file credential.
+
+### pushMavenArtifacts(Map config)
+Publishes Maven build output + build-info to Artifactory.
+`serverId`, `mavenTool`, `releaseRepo`, `snapshotRepo`, `pom`.
+
+### pushDockerImage(String imageTag, Map config)
+Pushes a Docker image to the Artifactory Docker repo via the `jfrog` CLI.
+`dockerRepo`, `buildName`, `buildNumber`.
+
+### promoteViaGitOps(Map config)
+Updates the image tag in the GitOps config repo (`<env>/values.yaml`) and commits/pushes —
+this is the "promotion" step; it never rebuilds the artifact.
+`environment` (dev|staging|prod), `configRepoDir`, `imageTag`.
+
+### syncArgoApp(String appName, Map config)
+Runs `argocd app sync` (optionally `--prune`) and waits for health.
+
+### rollbackArgoApp(String appName, String historyId)
+Rolls back via `argocd app rollback`. If no `historyId` given, instructs to Git-revert instead.

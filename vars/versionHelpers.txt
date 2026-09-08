@@ -1,0 +1,13 @@
+## versionHelpers
+
+Semantic version / tag computation, backed by `org.company.pipeline.VersionCalculator`.
+
+### resolve(Map config)
+Returns `[mavenVersion, dockerTag, gitTag, isRelease]` for the current branch.
+Reads the base version from `pom.xml` unless `baseVersion` is passed.
+
+### readMavenPomVersion(String pomPath)
+Lightweight regex extraction of `<version>` from a POM (no `mvn` invocation needed).
+
+### tagRelease(String gitTag, String message)
+Creates and pushes an annotated Git tag (no-op if `gitTag` is null, e.g. on feature/develop).

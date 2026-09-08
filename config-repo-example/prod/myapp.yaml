@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://git.company.com/platform/gitops-config.git
+    targetRevision: main
+    path: prod
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: myapp-prod
+  # No `automated:` block -- prod requires an explicit `argocd app sync` (or the pipeline's
+  # manual `input` gate followed by deployHelpers.syncArgoApp) rather than auto-sync.
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true

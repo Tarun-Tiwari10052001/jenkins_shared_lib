@@ -1,0 +1,21 @@
+## scanHelpers
+
+Security scanning stages. Every method fails the build (via `error()`) on policy violation,
+so wrap calls in a normal `stage { steps { script { scanHelpers.xxx(...) } } }` block and let
+Jenkins mark the stage/build red on failure.
+
+### runSonarQube(Map config)
+SAST via SonarQube Maven plugin + `waitForQualityGate()`.
+- `serverName` (default `SonarQubeServer`), `projectKey` (required), `timeoutMinutes` (default 10)
+
+### runDependencyCheck(Map config)
+OWASP Dependency-Check (SCA). Fails if a finding meets `failOnCvssScore` (default 9.0).
+
+### runGitleaks(Map config)
+Secret scanning. `redact` (default true) controls whether matched secrets are redacted in output.
+
+### runTrivyScan(String imageTag, Map config)
+Container image scanning. `severity` (default `CRITICAL,HIGH`) sets the Trivy `--severity` filter.
+
+### generateSBOM(String imageTag, String outputFile)
+Generates a CycloneDX SBOM with Syft and archives it as a Jenkins build artifact.

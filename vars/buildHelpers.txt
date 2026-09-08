@@ -1,0 +1,16 @@
+## buildHelpers
+
+Build steps for Maven-based Java services and their Docker images.
+
+### buildJavaApp(Map config)
+Runs `mvn clean verify` against the given POM.
+- `pom` (default `pom.xml`)
+- `mvnArgs` (default `-DskipTests=false`)
+
+### buildDockerImage(Map config)
+Builds a Docker image and returns the fully-qualified tag string.
+- `registry`, `imageName`, `tag` (required)
+- `dockerfile` (default `Dockerfile`), `context` (default `.`)
+
+### retagDockerImage(String sourceTag, List extraTags)
+Applies additional tags to an already-built local image (e.g. semver + `latest`).

@@ -1,0 +1,18 @@
+# Updated automatically by deployHelpers.promoteViaGitOps() -- do not hand-edit `image.tag`.
+image:
+  repository: myregistry/myapp
+  tag: dev-0000000
+  pullPolicy: IfNotPresent
+
+replicaCount: 2
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+env:
+  SPRING_PROFILES_ACTIVE: dev
