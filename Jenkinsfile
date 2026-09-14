@@ -21,7 +21,10 @@ pipeline {
         // Release/main/hotfix: no automatic trigger (manual or tag-push kicks these off).
         GenericTrigger(
             genericVariables: [[key: 'ref', value: '$.ref']],
-            token: 'WEBHOOK_TOKEN',
+            token: 'webhook-test',
+            causeString: 'GitHub push',
+            printContributedVariables: true,
+            printPostContent: false,
             regexpFilterText: '$ref',
             regexpFilterExpression: 'refs/heads/' + env.BRANCH_NAME
         )
@@ -29,9 +32,9 @@ pipeline {
     }
 
     environment {
-        VAULT_ADDR             = credentials('vault-addr')
-        ARTIFACTORY_CREDENTIALS = credentials('artifactory-creds')
-        REGISTRY               = 'myregistry'
+//        VAULT_ADDR             = credentials('vault-addr')
+//        ARTIFACTORY_CREDENTIALS = credentials('artifactory-creds')
+//        REGISTRY               = 'myregistry'
         IMAGE_NAME             = 'myapp'
         CONFIG_REPO_DIR        = 'gitops-config'
     }
