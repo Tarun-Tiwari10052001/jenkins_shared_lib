@@ -9,7 +9,7 @@
 //   - Agents labelled "docker && maven" with: docker, maven/jdk17, trivy, gitleaks,
 //     syft, cosign, jfrog-cli (jf), argocd-cli, jq, newman, git
 
-@Library('company-shared-library@main') _
+@Library('my-shared-lib@dev') _
 
 // ---------------------------------------------------------------------------
 // Branch-specific triggers (must run at script scope, before the pipeline{}
