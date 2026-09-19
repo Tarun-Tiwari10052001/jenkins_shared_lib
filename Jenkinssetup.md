@@ -765,3 +765,7 @@ For this local development environment:
 | Agent Root            | `/home/jenkins`        |
 | Docker Socket         | `/var/run/docker.sock` |
 | Shared Library Branch | `dev`                  |
+
+############
+## Note: getent group docker #on host and container gid mismatch get run problem together (host and container at same time ) >  groupmod -g 984 docker #run to correct id as  host has
+#########
