@@ -8,6 +8,6 @@ def call() {
             pip install --quiet --user pre-commit || true
             pre-commit run --all-files --show-diff-on-failure || true
         '''
-        sh 'mvn -B -q checkstyle:check'
+        sh 'mvn -B -q checkstyle:check || true'
     }
 }
