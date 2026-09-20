@@ -1,3 +1,4 @@
+// as running for local other wise it risky to expose sonar token: jenkins-myapp : sqp_a076a5480a4b84b86bded8b18934bcd4fb315637
 // vars/sonarAnalysis.groovy
 //
 // Static code analysis via SonarQube, gated by the SonarQube Quality Gate
