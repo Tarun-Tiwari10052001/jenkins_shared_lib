@@ -769,3 +769,168 @@ For this local development environment:
 ############
 ## Note: getent group docker #on host and container gid mismatch get run problem together (host and container at same time ) >  groupmod -g 984 docker #run to correct id as  host has
 #########
+# Runs SonarQube in Docker and exposes it on port 9000.
+Below is a compact **README-ready** version with the same steps and data preserved.
+
+````markdown
+# SonarQube Setup
+
+## 1. Run SonarQube as Docker Container
+
+```bash
+docker run -d \
+  --name sonarqube \
+  -p 9000:9000 \
+  sonarqube:latest
+````
+
+Access:
+[http://localhost:9000](http://localhost:9000)
+
+---
+
+## 2. SonarQube First-Time Login
+
+Username: `admin`
+Password: `admin`
+
+# On first login, SonarQube may ask to change the default admin password.
+
+---
+
+## 3. Create SonarQube Project
+
+Go to:
+
+`SonarQube → Projects → Create project`
+
+Configure:
+
+```text
+Project key:       myapp
+Display name:      Java E-Commerce
+Main branch name:  develop
+```
+
+---
+
+## 4. Generate SonarQube Token
+
+Go to:
+
+`My Account → Security → Generate Tokens`
+
+Configure:
+
+```text
+Name:       jenkins-myapp
+Type:       Project Analysis Token
+Project:    Java E-Commerce
+Expires:    1 year
+```
+
+Generate the token and copy it immediately.
+
+---
+
+## 5. Configure Sonar Token for POC
+
+For this local POC, the generated SonarQube token is pasted directly into the `sonarAnalysis.groovy` file in the `dev` branch.
+
+> Production: Never hardcode the SonarQube token. Store it in Jenkins Credentials, Vault, or another secret manager.
+
+---
+
+## 6. Install SonarQube Plugin in Jenkins
+
+Go to:
+
+`Jenkins → Manage Jenkins → Plugins → Available plugins`
+
+Search and install:
+
+```text
+SonarQube Scanner for Jenkins
+```
+
+Restart Jenkins if required.
+
+---
+
+## 7. Configure SonarQube in Jenkins
+
+Go to:
+
+`Jenkins → Manage Jenkins → System → SonarQube servers`
+
+Add:
+
+```text
+Name:        company-sonarqube
+Server URL:  http://192.168.1.42:9000
+```
+
+Save the configuration.
+
+---
+
+## 8. Configure SonarQube Webhook
+
+The webhook is required by Jenkins for:
+
+```groovy
+waitForQualityGate()
+```
+
+It allows SonarQube to notify Jenkins when the analysis and Quality Gate processing are completed.
+
+Go to:
+
+`SonarQube → Projects → Java E-Commerce → Project Settings → Webhooks → Create`
+
+Configure:
+
+```text
+Name:   jenkins
+URL:    http://192.168.1.42:8080/sonarqube-webhook/
+```
+
+Save the webhook.
+
+# Jenkins must be reachable from the SonarQube container/host for the webhook to work.
+
+---
+
+# Vault Configuration
+
+## 1. Run Vault in Development Mode
+
+```bash
+docker run -dit \
+  --name vault \
+  --network host \
+  -e VAULT_DEV_ROOT_TOKEN_ID='dev-root-token' \
+  -e VAULT_DEV_LISTEN_ADDRESS='0.0.0.0:8200' \
+  hashicorp/vault:latest \
+  server -dev
+```
+
+# Runs HashiCorp Vault in development mode using host networking and exposes Vault on port 8200.
+
+Vault URL:
+
+```text
+http://192.168.1.42:8200
+```
+
+Root token:
+
+```text
+dev-root-token
+```
+
+> POC only: `server -dev` and a static root token are not suitable for production. Use persistent storage, TLS, proper authentication, and non-root policies in production.
+
+```
+```
+
